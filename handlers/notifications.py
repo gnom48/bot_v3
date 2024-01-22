@@ -1,4 +1,5 @@
 from .utils import *
+from aiogram.utils.exceptions import RetryAfter
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from bot.consts import PUBLIC_CHAN_ID
@@ -18,8 +19,10 @@ async def take_old_posts(bot: Bot, dp: Dispatcher, source: str) -> None:
             media_group = [types.InputMediaPhoto(media=url) for url in hata.pics[1:]]
         media_group.append(media)
 
-        await bot.send_media_group(chat_id=PUBLIC_CHAN_ID, media=media_group)
-        await asyncio.sleep(6)
+        try:
+            await bot.send_media_group(chat_id=PUBLIC_CHAN_ID, media=media_group)
+        except RetryAfter:
+            await asyncio.sleep(5)
 
 
 async def take_new_posts(bot: Bot, dp: Dispatcher, source: str) -> None:

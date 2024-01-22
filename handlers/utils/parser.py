@@ -86,7 +86,10 @@ def get_first_n(n: int, source: str):
     options = webdriver.ChromeOptions()
     options.add_argument('headless')
     options.add_argument('--no-sandbox')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--disable-dev-shm-usage')
     driver=webdriver.Chrome(options=options)
+    # driver=webdriver.Chrome()
 
     current_dir = os.path.dirname(__file__)
     file_path = os.path.join(current_dir, source)
@@ -138,7 +141,10 @@ def find_new(source: str) -> list[Hata]:
     options = webdriver.ChromeOptions()
     options.add_argument('headless')
     options.add_argument('--no-sandbox')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--disable-dev-shm-usage')
     driver=webdriver.Chrome(options=options)
+    # driver=webdriver.Chrome()
 
     current_dir = os.path.dirname(__file__)
     file_path = os.path.join(current_dir, source)
