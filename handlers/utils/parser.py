@@ -82,7 +82,11 @@ def find_char(table, char) -> str:
 
 
 def get_first_n(n: int, source: str):
-    driver = webdriver.Chrome()
+
+    options = webdriver.ChromeOptions()
+    options.add_argument('headless')
+    options.add_argument('--no-sandbox')
+    driver=webdriver.Chrome(options=options)
 
     current_dir = os.path.dirname(__file__)
     file_path = os.path.join(current_dir, source)
