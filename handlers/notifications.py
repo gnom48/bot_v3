@@ -33,4 +33,7 @@ async def take_new_posts(bot: Bot, dp: Dispatcher, source: str) -> None:
         media = types.InputMediaPhoto(caption=f"📣<b>Новый объект!</b> #{hata.id} 📣\n\n<i><u>{hata.title}</u></i>\n\nТип недвижимости: {hata.type}\nЭтаж: {hata.floor}\nЛифт: {hata.lift}\nБалкон: {hata.balcony}\nГод постройки: {hata.year}\nМатериалы: {hata.material}\nЦена: {hata.price} \n\n" + f'Подробная информация по <u><a href="{hata.link}">{html.escape("ссылке")}</a></u>', parse_mode=types.ParseMode.HTML)
         media_group.append(media)
 
-        await bot.send_media_group(chat_id=PUBLIC_CHAN_ID, media=media_group)
+        try:
+            await bot.send_media_group(chat_id=PUBLIC_CHAN_ID, media=media_group)
+        except RetryAfter:
+            await asyncio.sleep(5)
