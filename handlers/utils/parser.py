@@ -84,7 +84,7 @@ def find_char(table, char) -> str:
 def get_first_n(n: int, source: str):
 
     options = webdriver.ChromeOptions()
-    options.add_argument('headless')
+    options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-gpu')
     options.add_argument('--disable-dev-shm-usage')
@@ -139,7 +139,7 @@ def get_first_n(n: int, source: str):
 def find_new(source: str) -> list[Hata]:
     
     options = webdriver.ChromeOptions()
-    options.add_argument('headless')
+    options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-gpu')
     options.add_argument('--disable-dev-shm-usage')
