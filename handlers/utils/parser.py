@@ -1,6 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import os
+from xvfbwrapper import Xvfb
+from selenium.webdriver.chrome.options import Options
 
 
 class Hata:
@@ -83,13 +85,12 @@ def find_char(table, char) -> str:
 
 def get_first_n(n: int, source: str):
 
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-gpu')
-    options.add_argument('--disable-dev-shm-usage')
-    driver=webdriver.Chrome(options=options)
-    # driver=webdriver.Chrome()
+    vdisplay = Xvfb()
+    vdisplay.start()
+    chrome_options = Options()
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-setuid-sandbox")
+    driver = webdriver.Chrome('/usr/bin/chromedriver', chrome_options=chrome_options)
 
     current_dir = os.path.dirname(__file__)
     file_path = os.path.join(current_dir, source)
@@ -133,18 +134,20 @@ def get_first_n(n: int, source: str):
         if len(data) != 0:
             get_chars(driver, data)
 
+        driver.close()
+        vdisplay.stop()
         return data
 
 
 def find_new(source: str) -> list[Hata]:
     
-    options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-gpu')
-    options.add_argument('--disable-dev-shm-usage')
-    driver=webdriver.Chrome(options=options)
-    # driver=webdriver.Chrome()
+    vdisplay = Xvfb()
+    vdisplay.start()
+
+    chrome_options = Options()
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-setuid-sandbox")
+    driver = webdriver.Chrome('/usr/bin/chromedriver', chrome_options=chrome_options)
 
     current_dir = os.path.dirname(__file__)
     file_path = os.path.join(current_dir, source)
@@ -183,4 +186,6 @@ def find_new(source: str) -> list[Hata]:
         if len(data) != 0:
             get_chars(driver, data)
 
+        driver.close()
+        vdisplay.stop()
         return data
