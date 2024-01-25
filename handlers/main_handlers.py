@@ -9,6 +9,7 @@ from .talks import *
 from .notifications import take_old_posts, take_new_posts
 from apscheduler.triggers.interval import IntervalTrigger
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
+import asyncio
 
 
 bot = Bot(token=TOKEN)
@@ -20,14 +21,17 @@ main_scheduler = AsyncIOScheduler(timezone="UTC")
 main_scheduler.add_job(func=take_new_posts, trigger=IntervalTrigger(hours=2), kwargs={"bot": bot, "dp": dp, "source": "source.txt"})
 
 
+# при старте бота
+async def on_start_bot(_):
+    await take_old_posts(bot=bot, dp=dp, source="source.txt")
+
+
 # команда старт
 @dp.message_handler(commands=['start'], state="*")
 async def start_cmd(msg: types.Message):
     await msg.answer(text=hello_message, reply_markup=get_main_menu_ikb(), parse_mode="HTML")
     await WorkStates.ready.set()
 
-    await take_old_posts(bot=bot, dp=dp, source="source.txt")
-    
 
 # слушает ввод инлайн клавиатуры главного меню
 @dp.callback_query_handler(state=WorkStates.ready)
@@ -36,24 +40,32 @@ async def main_menu_clicks(callback: types.CallbackQuery, state: FSMContext):
     
     if callback.data == "resources":
         await bot.send_message(chat_id=callback.from_user.id, text="Выберите интересующую вас ссылку:", reply_markup=get_official_links_ikb())
+        await asyncio.sleep(3)
         await bot.send_message(chat_id=callback.from_user.id, text=restart_message, reply_markup=get_main_menu_ikb(), parse_mode="HTML")
         await WorkStates.ready.set()
-
     
     elif callback.data == "map":
         await bot.send_message(chat_id=callback.from_user.id, text=map_text, reply_markup=get_map_link_ikb(), parse_mode="HTML")
+        await asyncio.sleep(3)
         await bot.send_message(chat_id=callback.from_user.id, text=restart_message, reply_markup=get_main_menu_ikb(), parse_mode="HTML")
         await WorkStates.ready.set()
     
     elif callback.data == "consult":
         await bot.send_message(chat_id=callback.from_user.id, text="Отлично!\n\nДавайте я помогу вам оставить заявку на бесплатную консультацию.", reply_markup=types.ReplyKeyboardRemove())
-        await bot.send_message(chat_id=callback.from_user.id, text="Введите свое имя (как наш сотрудник сможет к вам обращаться):")
+        await bot.send_message(chat_id=callback.from_user.id, text="Введите свое имя (как наш сотрудник сможет к вам обращаться):", reply_markup=get_cancel_rkb())
         await WorkStates.enter_fio.set()
 
 
 # ввод имени
 @dp.message_handler(state=WorkStates.enter_fio)
 async def enter_fio_handler(msg: types.Message, state: FSMContext):
+    if (msg.text == "Отмена записи"):
+        await bot.send_message(chat_id=msg.from_user.id, text="Ничего страшного, возможно в следующий раз вы захотите получить консультацию. Будем ждать вас снова.", reply_markup=types.ReplyKeyboardRemove())
+        await asyncio.sleep(3)
+        await bot.send_message(chat_id=msg.from_user.id, text=restart_message, reply_markup=get_main_menu_ikb(), parse_mode="HTML")
+        await WorkStates.ready.set()
+        return
+
     if len(msg.text) < 1:
         await msg.answer(text="Боюсь вы ввели непонятное имя, советую указать, как к вам сможет обращаться наш сотрудник.")
         await msg.answer(text="Теперь попробуйте еще раз:")
@@ -70,6 +82,13 @@ async def enter_fio_handler(msg: types.Message, state: FSMContext):
 # ввод номера телефона
 @dp.message_handler(state=WorkStates.enter_phone)
 async def enter_phone_handler(msg: types.Message, state: FSMContext):
+    if (msg.text == "Отмена записи"):
+        await bot.send_message(chat_id=msg.from_user.id, text="Ничего страшного, возможно в следующий раз вы захотите получить консультацию. Будем ждать вас снова.", reply_markup=types.ReplyKeyboardRemove())
+        await asyncio.sleep(3)
+        await bot.send_message(chat_id=msg.from_user.id, text=restart_message, reply_markup=get_main_menu_ikb(), parse_mode="HTML")
+        await WorkStates.ready.set()
+        return
+
     if not check_phone_number(msg.text):
         await msg.answer(text="Боюсь вы ввели некорректный номер телефона, советую указать телефон, по которому с вами можно будет связаться.")
         await msg.answer(text="Теперь попробуйте еще раз:")

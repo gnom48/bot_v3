@@ -15,7 +15,8 @@ def get_main_menu_ikb() -> InlineKeyboardMarkup:
 def get_official_links_ikb() -> InlineKeyboardMarkup:
     ikb = InlineKeyboardMarkup(row_width=1)
     ikb.add(InlineKeyboardMarkup(text="Канал с объявлениями", url=OBJECTS_CHAN_LINK),
-            InlineKeyboardMarkup(text="Официальный сайт", url=WEBSITE_LINL))
+            InlineKeyboardMarkup(text="Официальный сайт", url=WEBSITE_LINL),
+            InlineKeyboardMarkup(text="Мы ВКонтакте", url=VK_LINL))
     return ikb
 
 

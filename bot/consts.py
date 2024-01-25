@@ -7,3 +7,4 @@ PUBLIC_CHAN_ID = -1001824374984
 OBJECTS_CHAN_LINK = "https://t.me/pro_nedvizhimost_crimea"
 WEBSITE_LINL = "https://pronedvizh.ru/"
 Y_MAPS_LINK = "https://yandex.com/maps/org/pro_nedvizhimost/189535201496"
+VK_LINL = "https://vk.com/pronedvizh_sev"

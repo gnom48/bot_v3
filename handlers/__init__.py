@@ -1,3 +1,1 @@
-# from .notifications import *
-# from .main_handlers import *
-from .main_handlers import dp
+from .main_handlers import dp, on_start_bot
