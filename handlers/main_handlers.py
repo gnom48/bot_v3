@@ -109,7 +109,7 @@ async def object_types_clicks(callback: types.CallbackQuery, state: FSMContext):
     
     if callback.data == "private":
         async with state.proxy() as data:
-            data["type1"] = "Частаня"
+            data["type1"] = "Частная"
 
         await bot.send_message(chat_id=callback.from_user.id, text="Хорошо, теперь давайте уточним категорию:", reply_markup=get_private_object_types_ikb())
         await WorkStates.enter_object_type_private.set()

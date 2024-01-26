@@ -125,7 +125,8 @@ def get_first_n(n: int, source: str) -> list[Hata]: # Получение пер�
         get_chars(data)
 
     # for hata in data:
-    #     print(f"{hata.id} {hata.title} {hata.price} {hata.pics} {hata.material} {hata.lift} {hata.floor} {hata.type} {hata.year} {hata.balcony}")
+    #     print(f"\n\n|  {hata.link}  |   {hata.id} {hata.title} {hata.price} {hata.pics} {hata.material} {hata.lift} {hata.floor} {hata.type} {hata.year} {hata.balcony}")
+    #     print('https://proestate.24sn.ru' + hata.link[0])
 
     file.close()
     return data
