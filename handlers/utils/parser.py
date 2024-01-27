@@ -33,6 +33,7 @@ def find_char(table, char) -> str: # Функция поиска конкрет�
 
     return "Не указано"
 
+
 def get_chars(hatas: list[Hata]): # Функция задания всех характеристик объекту
     for hata in hatas:
         r = requests.get(f"https://proestate.24sn.ru{hata.link[0]}")
@@ -72,6 +73,7 @@ def get_chars(hatas: list[Hata]): # Функция задания всех ха�
         hata.type = find_char(characteristics, "Тип :")
         hata.year = find_char(characteristics, "Год постройки :")
         hata.balcony = find_char(characteristics, "Балкон :")
+
 
 def get_first_n(n: int, source: str) -> list[Hata]: # Получение первых n объектов
 

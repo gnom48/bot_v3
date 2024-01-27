@@ -18,8 +18,8 @@ dp = Dispatcher(bot, storage=storage)
 
 main_scheduler = AsyncIOScheduler(timezone="UTC")
 
-main_scheduler.add_job(func=take_new_posts, trigger=IntervalTrigger(hours=2), kwargs={"bot": bot, "dp": dp, "source": "source.txt"})
-
+main_scheduler.add_job(func=take_new_posts, trigger=IntervalTrigger(minutes=1), kwargs={"bot": bot, "dp": dp, "source": "source.txt"})
+main_scheduler.start()
 
 # при старте бота
 async def on_start_bot(_):
