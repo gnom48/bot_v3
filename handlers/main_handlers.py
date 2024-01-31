@@ -18,12 +18,12 @@ dp = Dispatcher(bot, storage=storage)
 
 main_scheduler = AsyncIOScheduler(timezone="UTC")
 
-main_scheduler.add_job(func=take_new_posts, trigger=IntervalTrigger(minutes=1), kwargs={"bot": bot, "dp": dp, "source": "source.txt"})
+main_scheduler.add_job(func=take_new_posts, trigger=IntervalTrigger(hours=2), kwargs={"bot": bot, "dp": dp})
 main_scheduler.start()
 
 # при старте бота
 async def on_start_bot(_):
-    await take_old_posts(bot=bot, dp=dp, source="source.txt")
+    await take_old_posts(bot=bot, dp=dp)
 
 
 # команда старт
@@ -93,54 +93,30 @@ async def enter_phone_handler(msg: types.Message, state: FSMContext):
         await msg.answer(text="Боюсь вы ввели некорректный номер телефона, советую указать телефон, по которому с вами можно будет связаться.")
         await msg.answer(text="Теперь попробуйте еще раз:")
         return
-
-    await msg.answer(text=f"Отлично, теперь выберите тип недвижимости, которая вас интересует:", reply_markup=get_object_types_ikb())
     
     async with state.proxy() as data:
         data["phone"] = msg.text
-    
-    await WorkStates.enter_object_type.set()
+
+    await msg.answer(text=f"Отлично, теперь выберите тип недвижимости, которая вас интересует:", reply_markup=get_all_object_types_ikb())
+    await WorkStates.enter_object_type_private.set()
 
 
-# слушает ввод инлайн клавиатуры типа недвижимости
-@dp.callback_query_handler(state=WorkStates.enter_object_type)
-async def object_types_clicks(callback: types.CallbackQuery, state: FSMContext):
-    await callback.answer("✓")
-    
-    if callback.data == "private":
-        async with state.proxy() as data:
-            data["type1"] = "Частная"
-
-        await bot.send_message(chat_id=callback.from_user.id, text="Хорошо, теперь давайте уточним категорию:", reply_markup=get_private_object_types_ikb())
-        await WorkStates.enter_object_type_private.set()
-        return
-
-    elif callback.data == "commercial":
-        async with state.proxy() as data:
-            data["type1"] = "Коммерческая"
-
-        await bot.send_message(chat_id=callback.from_user.id, text="Хорошо, теперь давайте уточним категорию:", reply_markup=get_commercial_object_types_ikb())
-        await WorkStates.enter_object_type_commercial.set()
-        return
-
-    else:
-        print("Что-то пошло не так")
-        
-        
-# слушает ввод инлайн клавиатуры ЧАСТОЙ недвижимости
+# слушает ввод инлайн клавиатуры типов недвижимости
 @dp.callback_query_handler(state=WorkStates.enter_object_type_private)
 async def private_object_types_clicks(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer("✓")
     
     async with state.proxy() as data:
         if callback.data == "flat":
-            data["type2"] = "Квартира"
+            data["type"] = "Квартира"
         elif callback.data == "dacha":
-            data["type2"] = "Земельный участок"   
+            data["type"] = "Земельный участок"   
         elif callback.data == "house":
-            data["type2"] = "Дом"
-        elif callback.data == "garage":
-            data["type2"] = "Гараж"
+            data["type"] = "Дом"
+        elif callback.data == "appart":
+            data["type"] = "Аппартаменты"
+        elif callback.data == "commercial":
+            data["type"] = "Коммерческая недвижимость"
         elif callback.data == "other":
             await bot.send_message(chat_id=callback.from_user.id, text="Понял, вам нужно что-то особенное! \n\nВы можете ввести название недвижимости, которая вас интересует самостоятельно:")
             await WorkStates.enter_object_type_other.set()
@@ -149,32 +125,10 @@ async def private_object_types_clicks(callback: types.CallbackQuery, state: FSMC
             print("Что-то пошло не так")
             return
 
-    await bot.send_message(chat_id=callback.from_user.id, text="Отлично, теперь чтобы давайте уточним ваш предполагемый бюджет, чтобы нас специалист смог подготовиться:", reply_markup=types.ReplyKeyboardRemove())
-    await WorkStates.enter_budget.set()
-
-    
-# слушает ввод инлайн клавиатуры КОММЕРЧЕСКОЙ недвижимости
-@dp.callback_query_handler(state=WorkStates.enter_object_type_commercial)
-async def commercial_object_types_clicks(callback: types.CallbackQuery, state: FSMContext):
-    await callback.answer("✓")
-    
-    async with state.proxy() as data:
-        if callback.data == "office":
-            data["type2"] = "Офис"
-        elif callback.data == "stock":
-            data["type2"] = "Склад"   
-        elif callback.data == "shop":
-            data["type2"] = "Магазин"
-        elif callback.data == "other":
-            await bot.send_message(chat_id=callback.from_user.id, text="Понял, вам нужно что-то особенное! \n\nВы можете ввести название недвижимости, которая вас интересует самостоятельно:")
-            await WorkStates.enter_object_type_other.set()
-            return
-        else:
-            print("Что-то пошло не так")
-            return
-        
-    await bot.send_message(chat_id=callback.from_user.id, text="Отлично, теперь чтобы давайте уточним ваш предполагемый бюджет, чтобы нас специалист смог подготовться:", reply_markup=types.ReplyKeyboardRemove())
-    await WorkStates.enter_budget.set()
+    # await bot.send_message(chat_id=callback.from_user.id, text="Отлично, теперь чтобы давайте уточним ваш предполагемый бюджет, чтобы нас специалист смог подготовиться:", reply_markup=types.ReplyKeyboardRemove())
+    # await WorkStates.enter_budget.set()
+    await bot.send_message(chat_id=callback.from_user.id, text="Хорошо, давайте определимся с территориальной принадлежностью объекта недвижимости (выберите район):", reply_markup=get_locate_object_ikb())
+    await WorkStates.enter_object_location.set()
 
 
 # ввод ОСОБЕННОЙ категории недвижимотси
@@ -186,36 +140,26 @@ async def enter_other_object_type_handler(msg: types.Message, state: FSMContext)
         return
         
     async with state.proxy() as data:
-        data["type2"] = msg.text
+        data["type"] = msg.text
     
-    await bot.send_message(chat_id=msg.from_user.id, text="Отлично, теперь чтобы давайте уточним ваш предполагемый бюджет (в рублях), чтобы нас сотрудник смог подготовться:", reply_markup=types.ReplyKeyboardRemove())
-    await WorkStates.enter_budget.set()
+    # await bot.send_message(chat_id=msg.from_user.id, text="Отлично, теперь чтобы давайте уточним ваш предполагемый бюджет (в рублях), чтобы нас сотрудник смог подготовться:", reply_markup=types.ReplyKeyboardRemove())
+    # await WorkStates.enter_budget.set()
+    await bot.send_message(chat_id=msg.from_user.id, text="Хорошо, давайте определимся с территориальной принадлежностью объекта недвижимости (выберите район):", reply_markup=get_locate_object_ikb())
+    await WorkStates.enter_object_location.set()
 
 
-# ввод предполагаемого бюджета
-@dp.message_handler(state=WorkStates.enter_budget)
-async def enter_other_object_type_handler(msg: types.Message, state: FSMContext):
-    budget = -1
-    try:
-        budget = int(msg.text)
-    except ValueError:
-        await msg.answer(text="Боюсь вы ввели некорректное число.")
-        await msg.answer(text="Теперь попробуйте еще раз:")
-        return
-    except Exception:
-        await msg.answer(text="Теперь попробуйте еще раз:")
-        return
-    finally:
-        if budget < 0:
-            await msg.answer(text="Боюсь вы ввели некорректное число.")
-            await msg.answer(text="Теперь попробуйте еще раз:")
-            return
-        
+# слушает ввод инлайн клавиатуры расположения недвижимости
+@dp.callback_query_handler(state=WorkStates.enter_object_location)
+async def object_location_clicks(callback: types.CallbackQuery, state: FSMContext):
+    await callback.answer("✓")
+    
     async with state.proxy() as data:
-        data["budget"] = budget
-    
-    await bot.send_message(chat_id=msg.from_user.id, text="Отлично, теперь вы можете дописать важные по вашему мнению сведения в комментарий, который увидит наш сотрудник при рассмотрении вашей заявки.", reply_markup=types.ReplyKeyboardRemove())
-    await bot.send_message(chat_id=msg.from_user.id, text="Если вы не хотите ничего писать просто нажмите кнопку \"Пропустить\"", reply_markup=get_skip_rkb())
+        data["locate"] = callback.data
+        
+    # await bot.send_message(chat_id=callback.from_user.id, text="Отлично, теперь чтобы давайте уточним ваш предполагемый бюджет, чтобы нас специалист смог подготовться:", reply_markup=types.ReplyKeyboardRemove())
+    # await WorkStates.enter_budget.set()
+    await bot.send_message(chat_id=callback.from_user.id, text="Отлично, теперь вы можете дописать важные по вашему мнению сведения в комментарий, который увидит наш сотрудник при рассмотрении вашей заявки.\n\nВы можете указать #ID объектов, которые вас заинтересовали просто скопировав их из объявления.", reply_markup=types.ReplyKeyboardRemove())
+    await bot.send_message(chat_id=callback.from_user.id, text="Если вы не хотите ничего писать просто нажмите кнопку \"Пропустить\"", reply_markup=get_skip_rkb())
     await WorkStates.enter_comment.set()
 
 
@@ -228,7 +172,7 @@ async def enter_comment_handler(msg: types.Message, state: FSMContext):
         else: 
             data["comment"] = msg.text
 
-        await bot.send_message(chat_id=ADMIN_CHAN_ID, text=create_post(data["fio"], data["phone"], data["type1"], data["type2"], data["budget"], data["comment"]), parse_mode="HTML")
+        await bot.send_message(chat_id=ADMIN_CHAN_ID, text=create_post(data["fio"], data["phone"], data["type"], data["locate"], data["comment"]), parse_mode="HTML")
 
     await bot.send_message(chat_id=msg.from_user.id, text="Замечательно, вы успешно заполнили заявку на консультацию!\n\nОчень скоро с вами свяжется один из наших сотрудников и проконсультирует вас в вашем вопросе.", reply_markup=types.ReplyKeyboardRemove())
     

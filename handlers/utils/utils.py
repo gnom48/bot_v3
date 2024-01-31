@@ -11,11 +11,11 @@ def check_phone_number(phone_number: str) -> bool:
 
 
 # создание поста-заявки
-def create_post(fio: str, phone: str, type1: str, type2: str, budget: int, comment: str) -> str:
+def create_post(fio: str, phone: str, type: str, locate: str, comment: str) -> str:
     res: str = f"<u><b>Заявка на консультацию</b></u>" + \
             f"\n\nКлиент: {fio}\nНомер телефона: {phone}" + \
-            f"\nИнтересующая категория недвижимости: {type1} ({type2})" + \
-            f"\nПредполагаемый бюджет: {budget}"
+            f"\nИнтересующая категория недвижимости: {type}" + \
+            f"\nИнтересующий район: {locate}"
     
     if comment != "Нет":
         res = res + f"\nПримечание от клиента: {comment}\n\n"

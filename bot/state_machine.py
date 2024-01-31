@@ -11,4 +11,5 @@ class WorkStates(StatesGroup):
     enter_object_type_commercial = State()
     enter_object_type_private = State()
     enter_object_type_other = State()
+    enter_object_location = State()
     enter_comment = State()

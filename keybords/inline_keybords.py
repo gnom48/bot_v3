@@ -27,6 +27,13 @@ def get_map_link_ikb() -> InlineKeyboardMarkup:
     return ikb
 
 
+# ссылка на бота
+def get_bot_link_ikb() -> InlineKeyboardMarkup:
+    ikb = InlineKeyboardMarkup(row_width=1)
+    ikb.add(InlineKeyboardMarkup(text="Заявка на консультацию", url=BOT_LINK))
+    return ikb
+
+
 # типы недвижимости
 def get_object_types_ikb() -> InlineKeyboardMarkup:
     ikb = InlineKeyboardMarkup(row_width=1)
@@ -35,21 +42,25 @@ def get_object_types_ikb() -> InlineKeyboardMarkup:
     return ikb
 
 
-# виды частной недвижимости
-def get_private_object_types_ikb() -> InlineKeyboardMarkup:
+# районы
+def get_locate_object_ikb() -> InlineKeyboardMarkup:
     ikb = InlineKeyboardMarkup(row_width=1)
-    ikb.add(InlineKeyboardButton(text="🏢 Квартира", callback_data="flat"),
-            InlineKeyboardButton(text="🌳 Земля", callback_data="dacha"),
-            InlineKeyboardButton(text="🏡 Земля с домом", callback_data="house"),
-            InlineKeyboardButton(text="📝 Другое", callback_data="other"))
+    ikb.add(InlineKeyboardButton(text="Ленинский", callback_data="Ленинский"),
+            InlineKeyboardButton(text="Гагаринский", callback_data="Гагаринский"),
+            InlineKeyboardButton(text="Нахимоский", callback_data="Нахимоский"),
+            InlineKeyboardButton(text="Балаклавский", callback_data="Балаклавский"),
+            InlineKeyboardButton(text="Пригород", callback_data="Пригород"),
+            InlineKeyboardButton(text="Не важен", callback_data="Не важен"))
     return ikb
 
 
-# виды коммерческой недвижимости
-def get_commercial_object_types_ikb() -> InlineKeyboardMarkup:
+# обобщенные виды недвижимости
+def get_all_object_types_ikb() -> InlineKeyboardMarkup:
     ikb = InlineKeyboardMarkup(row_width=1)
-    ikb.add(InlineKeyboardButton(text="🖨 Офис", callback_data="office"),
-            InlineKeyboardButton(text="📦 Склад", callback_data="stock"),
-            InlineKeyboardButton(text="🛒 Магазин", callback_data="shop"),
+    ikb.add(InlineKeyboardButton(text="🏢 Дом", callback_data="house"),
+            InlineKeyboardButton(text="🌳 Участок", callback_data="dacha"),
+            InlineKeyboardButton(text="🏡 Квартира", callback_data="flat"),
+            InlineKeyboardButton(text="🛋 Аппартаменты", callback_data="appart"),
+            InlineKeyboardButton(text="🧰 Коммерческая недвижимость", callback_data="commercial"),
             InlineKeyboardButton(text="📝 Другое", callback_data="other"))
     return ikb
