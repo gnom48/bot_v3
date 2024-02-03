@@ -1,9 +1,18 @@
 import re
 
 
+# # проверка номера телефона
+# def check_phone_number(phone_number: str) -> bool:
+#     pattern = r'^\+\d{1,2}\(\d{3}\)\d{3}-\d{2}-\d{2}$'
+#     match = re.match(pattern, phone_number)
+#     if match:
+#         return True
+#     return False
+
+
 # проверка номера телефона
 def check_phone_number(phone_number: str) -> bool:
-    pattern = r'^\+\d{1,2}\(\d{3}\)\d{3}-\d{2}-\d{2}$'
+    pattern = r'^\+\d{11}$' # +78881114433
     match = re.match(pattern, phone_number)
     if match:
         return True

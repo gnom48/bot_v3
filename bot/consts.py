@@ -2,7 +2,8 @@
 TOKEN = "6250128072:AAGRu7giVPv9dZFzcgZ4pHn_-_N487rJzCg" # Pro_nedvizh_public_bot
 
 ADMIN_CHAN_ID = -1002019174859
-PUBLIC_CHAN_ID = -1001824374984
+PUBLIC_CHAN_ID = -1001656993201 # канал
+# PUBLIC_CHAN_ID = 1662173315 # для отладки
 BOT_LINK = "https://t.me/Pro_nedvizh_public_bot"
 
 OBJECTS_CHAN_LINK = "https://t.me/pro_nedvizhimost_crimea"

@@ -17,13 +17,13 @@ storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
 main_scheduler = AsyncIOScheduler(timezone="UTC")
+main_scheduler.add_job(func=take_new_posts, trigger=IntervalTrigger(hours=1), kwargs={"bot": bot, "dp": dp})
 
-main_scheduler.add_job(func=take_new_posts, trigger=IntervalTrigger(hours=2), kwargs={"bot": bot, "dp": dp})
-main_scheduler.start()
 
 # при старте бота
 async def on_start_bot(_):
     await take_old_posts(bot=bot, dp=dp)
+    main_scheduler.start()
 
 
 # команда старт
@@ -74,7 +74,7 @@ async def enter_fio_handler(msg: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data["fio"] = msg.text
 
-    await msg.answer(text=f"Отлично, <b>{msg.text}</b>, теперь введите контактный номер телефона в формате <b>+7(777)777-77-77</b>, чтобы наш сотрудник смог связаться с вами в ближайшее время:", parse_mode="HTML")
+    await msg.answer(text=f"Отлично, <b>{msg.text}</b>, теперь введите контактный номер телефона в формате <b>+7xxxxxxxxxx</b> (без разделителей), чтобы наш сотрудник смог связаться с вами в ближайшее время:", parse_mode="HTML")
     
     await WorkStates.enter_phone.set()
 
