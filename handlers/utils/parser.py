@@ -28,7 +28,7 @@ class Hata:  # Класс представления данных
         self.address = address
         self.advert_type = advert_type
 
-
+        
 def find_char(table, char) -> str: # Функция поиска конкретной харакетристики
     cols = table.xpath(".//div")
     for col in cols:
@@ -36,7 +36,7 @@ def find_char(table, char) -> str: # Функция поиска конкрет�
         values = col.xpath(".//ul[@class='list-inline-item']")[0].xpath(".//li")
 
         for i, li in enumerate(names):
-            if li.xpath(".//text()")[0] == char:
+            if char in li.xpath(".//text()")[0]:
                 return values[i].xpath(".//text()")[0]
 
     return "Не указано"
@@ -69,16 +69,16 @@ def get_chars(hatas: list[Hata]): # Функция задания всех ха�
                 pics.append(f"""https://proestate.24sn.ru{pic_col2[i].xpath(".//a[@class='popup-img']/@href")[0]}""")
         except:
             pics = []
-
+            
         hata.price = price
         hata.pics = pics
-        hata.material = find_char(characteristics, "Материал дома :")
-        hata.lift = find_char(characteristics, "Лифт :")
-        hata.floor = find_char(characteristics, "Этаж :")
-        hata.type = find_char(characteristics, "Тип :")
-        hata.year = find_char(characteristics, "Год постройки :")
-        hata.square= find_char(characteristics, "Площадь :")
-        hata.balcony = find_char(characteristics, "Балкон :")
+        hata.material = find_char(characteristics, "Материал")
+        hata.lift = find_char(characteristics, "Лифт")
+        hata.floor = find_char(characteristics, "Этаж")
+        hata.type = find_char(characteristics, "Тип")
+        hata.year = find_char(characteristics, "Год")
+        hata.balcony = find_char(characteristics, "Балкон")
+        hata.square = find_char(characteristics, "Площадь")
 
 
 def get_first_n_personal(n: int, source: str, link_site: str) -> list[Hata]: # Получение первых n объектов
@@ -119,11 +119,11 @@ def get_first_n_personal(n: int, source: str, link_site: str) -> list[Hata]: # �
 
             if id not in objects:
                 link = details.xpath(".//a[@class='fp_price']/@href")
-                advert_type: str = "ПРОДАЖА"
+                advert_type: str = "продажа"
                 if source == "source_sale.txt":
-                    advert_type = "ПРОДАЖА"
+                    advert_type = "продажа"
                 else:
-                    advert_type = "АРЕНДА"
+                    advert_type = "аренда"
                 data.append(Hata(id, title, link, contract, address, advert_type))
                 file.write(f"{id}\n")
 
