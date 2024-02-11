@@ -10,7 +10,7 @@ import asyncio
 
 async def take_old_posts(bot: Bot, dp: Dispatcher) -> None:
     hatas = get_first_n(n=3)
-    # print("take_old_posts", hatas, sep="\n\n")
+    print("take_old_posts", hatas, "\n", sep="\n")
 
     for hata in hatas:
         media_group = []
@@ -36,7 +36,7 @@ async def take_old_posts(bot: Bot, dp: Dispatcher) -> None:
 
 async def take_new_posts(bot: Bot, dp: Dispatcher) -> None:
     hatas = find_new()
-    # print("take_new_posts", hatas, sep="\n\n")
+    print("take_new_posts", hatas, "\n", sep="\n")
 
     for hata in hatas:
         media_group = []

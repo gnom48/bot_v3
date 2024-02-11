@@ -1,6 +1,7 @@
 import requests
 import os
 from lxml import html
+from itertools import zip_longest
 
 
 class Hata:  # Класс представления данных
@@ -146,9 +147,11 @@ def get_first_n_personal(n: int, source: str, link_site: str) -> list[Hata]: # �
 
 
 def get_first_n(n: int) -> list[Hata]:
-    res = zip(get_first_n_personal(n, "source_sale.txt", "https://proestate.24sn.ru/catalog/?address=&contract=sale&category=all&price_min=&price_max=&currency=RUB"),
-               get_first_n_personal(n, "source_rent.txt", "https://proestate.24sn.ru/catalog/?address=&contract=rent&category=all&mortgage=N&price_min=&price_max=&currency=RUB"))
-    return [item for sublist in res for item in sublist]
+    sale = get_first_n_personal(n, "source_sale.txt", "https://proestate.24sn.ru/catalog/?address=&contract=sale&category=all&price_min=&price_max=&currency=RUB")
+    rent = get_first_n_personal(n, "source_rent.txt", "https://proestate.24sn.ru/catalog/?address=&contract=rent&category=all&mortgage=N&price_min=&price_max=&currency=RUB")
+    sale.reverse()
+    rent.reverse()
+    return [item for pair in zip_longest(sale, rent) for item in pair if item is not None]
 
 
 def find_new_personal(source: str, link_site: str) -> list[Hata]: # Поиск новых объектов
@@ -214,7 +217,8 @@ def find_new_personal(source: str, link_site: str) -> list[Hata]: # Поиск �
 
 
 def find_new() -> list[Hata]:
-    res = zip(find_new_personal("source_sale.txt", "https://proestate.24sn.ru/catalog/?address=&contract=sale&category=all&price_min=&price_max=&currency=RUB"),
-              find_new_personal("source_rent.txt", "https://proestate.24sn.ru/catalog/?address=&contract=rent&category=all&mortgage=N&price_min=&price_max=&currency=RUB"))
-    return [item for sublist in res for item in sublist]
-    
+    sale = find_new_personal("source_sale.txt", "https://proestate.24sn.ru/catalog/?address=&contract=sale&category=all&price_min=&price_max=&currency=RUB")
+    rent = find_new_personal("source_rent.txt", "https://proestate.24sn.ru/catalog/?address=&contract=rent&category=all&mortgage=N&price_min=&price_max=&currency=RUB")
+    sale.reverse()
+    rent.reverse()
+    return [item for pair in zip_longest(sale, rent) for item in pair if item is not None]
