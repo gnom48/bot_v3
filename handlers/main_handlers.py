@@ -17,7 +17,7 @@ storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
 main_scheduler = AsyncIOScheduler(timezone="UTC")
-main_scheduler.add_job(func=take_new_posts, trigger=IntervalTrigger(seconds=10), kwargs={"bot": bot, "dp": dp})
+main_scheduler.add_job(func=take_new_posts, trigger=IntervalTrigger(hours=1), kwargs={"bot": bot, "dp": dp})
 
 
 # при старте бота
